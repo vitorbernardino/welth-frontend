@@ -1,15 +1,15 @@
 export interface ApiResponse<T = any> {
-    success: boolean;
-    data: T;
-    message?: string;
-    timestamp: string;
-    pagination?: {
-      page: number;
-      limit: number;
-      total: number;
-      totalPages: number;
-    };
-  }
+  success: boolean;
+  data: T;
+  message?: string;
+  timestamp: string;
+  pagination?: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
   
   export interface Transaction {
     _id: string;
@@ -89,14 +89,7 @@ export interface ApiResponse<T = any> {
     userId: string;
     year: number;
     month: number;
-    dailyData: Array<{
-      day: number;
-      income: number;
-      expenses: number;
-      dailySpending: number;
-      balance: number;
-      calculatedBalance: number;
-    }>;
+    dailyData: DayData[];
     monthlyProjections: {
       totalIncome: number;
       totalExpenses: number;
@@ -105,4 +98,13 @@ export interface ApiResponse<T = any> {
     };
     createdAt: string;
     updatedAt: string;
+  }
+
+  export interface DayData {
+    day: number;
+    income: number;
+    expenses: number;
+    dailySpending: number;
+    balance: number;
+    calculatedBalance: number;
   }

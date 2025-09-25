@@ -7,6 +7,7 @@ import { useToast } from './use-toast';
 export const useDashboard = () => {
   return useQuery({
     queryKey: ['dashboard'],
+    // Nenhuma alteração necessária aqui, já está correto.
     queryFn: async () => {
       console.log('useDashboard: Iniciando requisição...');
       
@@ -31,7 +32,8 @@ export const useDashboard = () => {
 export const useDashboardSummary = () => {
   return useQuery({
     queryKey: ['dashboard-summary'],
-    queryFn: apiService.getDashboardSummary,
+    // Alteração 1: Envolver em uma arrow function para preservar o 'this'.
+    queryFn: () => apiService.getDashboardSummary(),
     refetchInterval: 5 * 60 * 1000,
   });
 };
@@ -40,6 +42,7 @@ export const useDashboardSummary = () => {
 export const useTransactions = (params?: any) => {
   return useQuery({
     queryKey: ['transactions', params],
+    // Nenhuma alteração necessária aqui, já está correto.
     queryFn: () => apiService.getTransactions(params),
   });
 };
@@ -148,8 +151,8 @@ export const useDeleteTransaction = () => {
 export const useInvestments = () => {
   return useQuery({
     queryKey: ['investments'],
-    queryFn: apiService.getInvestments,
-    refetchInterval: 10 * 60 * 1000, // 10 minutes
+    queryFn: () => apiService.getInvestments(),
+    refetchInterval: 10 * 60 * 1000,
   });
 };
 
@@ -164,7 +167,7 @@ export const useInvestmentsByConnection = (itemId: string) => {
 export const useTotalInvested = () => {
   return useQuery({
     queryKey: ['investments', 'total'],
-    queryFn: apiService.getTotalInvested,
+    queryFn: () => apiService.getTotalInvested(),
   });
 };
 
@@ -195,7 +198,7 @@ export const useSyncInvestments = () => {
 export const useAllSpreadsheets = () => {
   return useQuery({
     queryKey: ['spreadsheets', 'all'],
-    queryFn: apiService.getAllSpreadsheets,
+    queryFn: () => apiService.getAllSpreadsheets(),
   });
 };
 
@@ -210,7 +213,7 @@ export const useSpreadsheetByMonth = (year: number, month: number) => {
 export const useNext10Months = () => {
   return useQuery({
     queryKey: ['spreadsheets', 'next-10-months'],
-    queryFn: apiService.getNext10Months,
+    queryFn: () => apiService.getNext10Months(),
   });
 };
 
@@ -277,7 +280,7 @@ export const useUpdateDayData = () => {
 export const useConnections = () => {
   return useQuery({
     queryKey: ['connections'],
-    queryFn: apiService.getConnections,
+    queryFn: () => apiService.getConnections(),
     refetchInterval: 5 * 60 * 1000,
   });
 };
