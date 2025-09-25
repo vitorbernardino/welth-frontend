@@ -2,14 +2,14 @@ import { useState } from "react";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Header } from "@/components/layout/Header";
 import { DashboardStats } from "@/components/dashboard/DashboardStats";
-import { BalanceChart } from "@/components/dashboard/BalanceChart";
 import { ExpenseBreakdown } from "@/components/dashboard/ExpenseBreakdown";
 import { RecentTransactions } from "@/components/dashboard/RecentTransactions";
 import { MonthlySpreadsheet } from "@/components/spreadsheet/MonthlySpreadsheet";
 import { TransactionFormModal } from "@/components/transactions/TransactionFormModal";
 import { TransactionList } from "@/components/transactions/TransactionList";
-import { InvestmentPortfolio } from "@/components/investments/InvestmentPortfolio";
-import BankConnections from "./BankConnections";
+import { BalanceChart } from "@/components/dashboard/BalanceChast";
+import { InvestmentPortfolio } from "@/components/investments/investmentPortfolio";
+import BankConnections from "./BankConnection";
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("dashboard");

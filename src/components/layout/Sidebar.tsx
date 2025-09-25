@@ -9,7 +9,7 @@ import {
   X
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import WelthIcon from "@/assets/welth-icon.svg";
+const WelthIcon = "/welth-icon.svg";
 
 interface SidebarProps {
   activeTab: string;

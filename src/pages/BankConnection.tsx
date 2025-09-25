@@ -1,4 +1,4 @@
-import { BankConnectionsList } from "@/components/bank-connections/BankConnectionsList";
+import { BankConnectionsList } from "@/components/bank-connections/BankConnectionList";
 
 const BankConnections = () => {
   return (

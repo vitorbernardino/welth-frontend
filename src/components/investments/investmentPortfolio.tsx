@@ -1,17 +1,14 @@
 import { useState, useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { TrendingUp, Search, Filter, RefreshCw, DollarSign, Package, Target, Loader2 } from "lucide-react";
+import { Search, Filter, RefreshCw, DollarSign, Package, Target, Loader2 } from "lucide-react";
 import { InvestmentSummary } from "./InvestmentSummary";
 import { InvestmentTypeSection } from "./InvestmentTypeSection";
 import { InvestmentFilters } from "./InvestmentFilters";
-import { BankConnectionButton } from "@/components/bank-connections/BankConnectionButton";
 import { useToast } from "@/hooks/use-toast";
 import { useInvestments, useSyncAllTransactions } from "@/hooks/useApi";
-import { Investment, InvestmentByType, InvestmentFilters as IInvestmentFilters } from "@/types/investment";
 
 // Mock data baseado na estrutura da API fornecida
 const mockInvestmentData = {

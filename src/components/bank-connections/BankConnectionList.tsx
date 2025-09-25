@@ -6,7 +6,6 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Building2, RefreshCw, Trash2, CheckCircle, XCircle, Clock, Wifi } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { BankConnectionButton } from "./BankConnectionButton";
-import { useConnections, useDeleteConnection, useSyncTransactions } from "@/hooks/useApi";
 import { BankConnection, ConnectionStatus } from "@/types/bank-connection";
 
 // Mock data para conexões existentes

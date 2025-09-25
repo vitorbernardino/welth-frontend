@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowUpRight, ArrowDownRight, MoreHorizontal } from "lucide-react";
+import { ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { useRecentTransactions } from "@/hooks/useApi";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
