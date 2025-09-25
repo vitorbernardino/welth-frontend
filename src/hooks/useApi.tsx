@@ -7,8 +7,24 @@ import { useToast } from './use-toast';
 export const useDashboard = () => {
   return useQuery({
     queryKey: ['dashboard'],
-    queryFn: apiService.getDashboard,
+    queryFn: async () => {
+      console.log('useDashboard: Iniciando requisição...');
+      
+      try {
+        const result = await apiService.getDashboard();
+        console.log('useDashboard: Resultado recebido:', result);
+        return result;
+      } catch (error) {
+        console.error('useDashboard: Erro na requisição:', error);
+        throw error;
+      }
+    },
     refetchInterval: 5 * 60 * 1000, // 5 minutes
+    retry: (failureCount, error: any) => {
+      console.log('useDashboard: Tentativa de retry:', failureCount, error?.message);
+      return failureCount < 3;
+    },
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 };
 
@@ -31,7 +47,18 @@ export const useTransactions = (params?: any) => {
 export const useRecentTransactions = () => {
   return useQuery({
     queryKey: ['transactions', 'recent'],
-    queryFn: apiService.getRecentTransactions,
+    queryFn: async () => {
+      console.log('useRecentTransactions: Iniciando requisição...');
+      
+      try {
+        const result = await apiService.getRecentTransactions();
+        console.log('useRecentTransactions: Resultado recebido:', result);
+        return result;
+      } catch (error) {
+        console.error('useRecentTransactions: Erro na requisição:', error);
+        throw error;
+      }
+    },
     refetchInterval: 2 * 60 * 1000, // 2 minutes
   });
 };
