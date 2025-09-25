@@ -1,68 +1,152 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
+@layer base {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 0%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 0%;
+
+    --primary: 0 0% 0%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 9%;
+
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
+
+    --accent: 0 0% 96%;
+    --accent-foreground: 0 0% 9%;
+
+    --destructive: 0 0% 0%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 89%;
+    --input: 0 0% 89%;
+    --ring: 0 0% 0%;
+
+    --radius: 0.75rem;
+
+    /* Financial specific colors - Colored theme */
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --income: 142 76% 36%;
+    --income-foreground: 0 0% 100%;
+    --expense: 0 84% 60%;
+    --expense-foreground: 0 0% 100%;
+    
+    /* Investment specific colors */
+    --investment-fixed: 217 91% 60%;
+    --investment-fixed-foreground: 0 0% 100%;
+    --investment-variable: 142 76% 36%;
+    --investment-variable-foreground: 0 0% 100%;
+    --investment-crypto: 25 95% 53%;
+    --investment-crypto-foreground: 0 0% 100%;
+    --investment-other: 262 83% 58%;
+    --investment-other-foreground: 0 0% 100%;
+    
+    /* Gradients - Black & White */
+    --gradient-primary: linear-gradient(135deg, hsl(0 0% 0%) 0%, hsl(0 0% 20%) 100%);
+    --gradient-success: linear-gradient(135deg, hsl(0 0% 0%) 0%, hsl(0 0% 10%) 100%);
+    --gradient-expense: linear-gradient(135deg, hsl(0 0% 40%) 0%, hsl(0 0% 60%) 100%);
+    
+    /* Shadows */
+    --shadow-elegant: 0 10px 25px -5px hsl(0 0% 0% / 0.15), 0 4px 6px -2px hsl(0 0% 0% / 0.1);
+    --shadow-card: 0 1px 3px 0 hsl(0 0% 0% / 0.12), 0 1px 2px 0 hsl(0 0% 0% / 0.08);
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 0 0% 15%;
+    --sidebar-primary: 0 0% 0%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 96%;
+    --sidebar-accent-foreground: 0 0% 9%;
+    --sidebar-border: 0 0% 89%;
+    --sidebar-ring: 0 0% 0%;
   }
-  a:hover {
-    color: #747bff;
+
+  .dark {
+    --background: 220 13% 6%;
+    --foreground: 220 9% 98%;
+
+    --card: 220 13% 11%;
+    --card-foreground: 220 9% 98%;
+
+    --popover: 220 13% 11%;
+    --popover-foreground: 220 9% 98%;
+
+    --primary: 220 9% 98%;
+    --primary-foreground: 220 13% 6%;
+
+    --secondary: 220 13% 18%;
+    --secondary-foreground: 220 9% 98%;
+
+    --muted: 220 13% 16%;
+    --muted-foreground: 220 9% 65%;
+
+    --accent: 220 13% 18%;
+    --accent-foreground: 220 9% 98%;
+
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 220 9% 98%;
+
+    --border: 220 13% 18%;
+    --input: 220 13% 18%;
+    --ring: 220 9% 83%;
+    
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --income: 142 76% 36%;
+    --income-foreground: 0 0% 100%;
+    --expense: 0 84% 60%;
+    --expense-foreground: 0 0% 100%;
+    
+    --sidebar-background: 220 13% 4%;
+    --sidebar-foreground: 220 9% 95%;
+    --sidebar-primary: 220 9% 98%;
+    --sidebar-primary-foreground: 220 13% 4%;
+    --sidebar-accent: 220 13% 16%;
+    --sidebar-accent-foreground: 220 9% 95%;
+    --sidebar-border: 220 13% 16%;
+    --sidebar-ring: 220 9% 83%;
+    
+    --gradient-primary: linear-gradient(135deg, hsl(220 13% 8%) 0%, hsl(220 13% 14%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(220 13% 11%) 0%, hsl(220 13% 13%) 100%);
+    --gradient-sidebar: linear-gradient(180deg, hsl(220 13% 4%) 0%, hsl(220 13% 6%) 100%);
   }
-  button {
-    background-color: #f9f9f9;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+  
+  .dark body {
+    background: var(--gradient-primary);
+  }
+  
+  .dark .sidebar {
+    background: var(--gradient-card);
+    border-right: 1px solid hsl(var(--border));
+  }
+  
+  .dark [data-state="open"] > .card,
+  .dark .card {
+    background: var(--gradient-card);
+    border: 1px solid hsl(var(--border));
   }
 }
