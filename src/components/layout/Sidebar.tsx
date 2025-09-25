@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { 
   LayoutDashboard, 
@@ -18,33 +19,48 @@ interface SidebarProps {
 
 export const Sidebar = ({ activeTab, onTabChange }: SidebarProps) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const menuItems = [
     {
       id: "dashboard",
       label: "Dashboard",
       icon: LayoutDashboard,
-      description: "Visão geral das finanças"
+      description: "Visão geral das finanças",
+      path: "/dashboard"
     },
     {
       id: "spreadsheet",
       label: "Planilha",
       icon: Calculator,
-      description: "Controle diário"
+      description: "Controle diário",
+      path: "/planilha"
     },
     {
       id: "transactions",
       label: "Lançamentos",
       icon: ArrowUpDown,
-      description: "Entradas e saídas"
+      description: "Entradas e saídas",
+      path: "/lancamentos"
     },
     {
       id: "investments",
       label: "Investimentos",
       icon: TrendingUp,
-      description: "Carteira e rentabilidade"
+      description: "Carteira e rentabilidade",
+      path: "/investimentos"
     }
   ];
+
+  // Determinar qual item está ativo baseado na rota atual
+  const getActiveTab = () => {
+    const currentPath = location.pathname;
+    const activeItem = menuItems.find(item => item.path === currentPath);
+    return activeItem ? activeItem.id : "dashboard";
+  };
+
+  const currentActiveTab = getActiveTab();
 
   return (
     <div className={cn(
@@ -78,7 +94,7 @@ export const Sidebar = ({ activeTab, onTabChange }: SidebarProps) => {
       <nav className="flex-1 p-4 space-y-2">
         {menuItems.map((item) => {
           const Icon = item.icon;
-          const isActive = activeTab === item.id;
+          const isActive = currentActiveTab === item.id;
           
           return (
             <Button
@@ -89,7 +105,7 @@ export const Sidebar = ({ activeTab, onTabChange }: SidebarProps) => {
                 isCollapsed && "px-2",
                 isActive && "bg-primary text-primary-foreground shadow-md"
               )}
-              onClick={() => onTabChange(item.id)}
+              onClick={() => navigate(item.path)}
             >
               <Icon className={cn("h-5 w-5", !isCollapsed && "mr-3")} />
               {!isCollapsed && (

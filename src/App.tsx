@@ -9,6 +9,9 @@ import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
+import Spreadsheet from "./pages/Spreadsheet";
+import Transactions from "./pages/Transactions";
+import Investments from "./pages/Investments";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,6 +30,21 @@ const App = () => (
             <Route path="/dashboard" element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/planilha" element={
+              <ProtectedRoute>
+                <Spreadsheet />
+              </ProtectedRoute>
+            } />
+            <Route path="/lancamentos" element={
+              <ProtectedRoute>
+                <Transactions />
+              </ProtectedRoute>
+            } />
+            <Route path="/investimentos" element={
+              <ProtectedRoute>
+                <Investments />
               </ProtectedRoute>
             } />
             <Route path="*" element={<NotFound />} />
