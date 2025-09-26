@@ -179,23 +179,55 @@ export const useTotalInvested = () => {
   });
 };
 
-export const useSyncInvestments = () => {
+export const useSyncAllInvestments = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: apiService.syncInvestments,
+    // A função de mutação é assíncrona para orquestrar múltiplas chamadas.
+    mutationFn: async () => {
+      // Passo 1: Buscar todas as conexões do usuário para obter os IDs (itemId).
+      const connectionsResponse = await apiService.getConnections();
+      if (!connectionsResponse.success || !connectionsResponse.data) {
+        throw new Error("Falha ao buscar conexões para sincronização.");
+      }
+      
+      const connections = connectionsResponse.data;
+      if (connections.length === 0) {
+        toast({
+          title: "Nenhuma conexão encontrada",
+          description: "Não há contas bancárias conectadas para sincronizar.",
+        });
+        return { totalSynced: 0 };
+      }
+
+      // Passo 2: Criar um array de promessas, uma para cada chamada de sincronização de investimentos.
+      const syncPromises = connections.map(connection =>
+        apiService.syncInvestments(connection.itemId)
+      );
+
+      // Passo 3: Executar todas as promessas em paralelo para maior eficiência.
+      const results = await Promise.all(syncPromises);
+      
+      // Opcional: Agregar resultados para um feedback mais detalhado.
+      const totalCreated = results.reduce((sum, res) => sum + (res.data.investmentsCreated || 0), 0);
+      const totalUpdated = results.reduce((sum, res) => sum + (res.data.investmentsUpdated || 0), 0);
+
+      return { totalSynced: connections.length, totalCreated, totalUpdated };
+    },
     onSuccess: (data) => {
+      // Passo 4: Após o sucesso de todas as sincronizações, invalidar a query de investimentos
+      // para que o react-query busque os dados atualizados e recarregue a tela.
       queryClient.invalidateQueries({ queryKey: ['investments'] });
       toast({
-        title: "Sincronização concluída!",
-        description: `${data.data.investmentsCreated} novos investimentos, ${data.data.investmentsUpdated} atualizados.`,
+        title: "Sincronização de Investimentos Concluída!",
+        description: `${data.totalSynced} conexões sicronizadas. Criados: ${data.totalCreated}, Atualizados: ${data.totalUpdated}.`,
       });
     },
     onError: (error: any) => {
       toast({
-        title: "Erro na sincronização",
-        description: error.message || "Erro ao sincronizar investimentos.",
+        title: "Erro na Sincronização",
+        description: error.message || "Não foi possível sincronizar os investimentos.",
         variant: "destructive",
       });
     },
