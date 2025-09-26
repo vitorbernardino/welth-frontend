@@ -106,18 +106,18 @@ export const TransactionList = () => {
   return (
     <Card>
       <CardHeader>
-          <CardTitle>Transações</CardTitle>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 text-muted-foreground transform -translate-y-1/2" />
-              <Input
-                placeholder="Buscar transações..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            
+        <CardTitle>Transações</CardTitle>
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 text-muted-foreground transform -translate-y-1/2" />
+            <Input
+              placeholder="Buscar transações..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          
           <Select value={typeFilter} onValueChange={setTypeFilter}>
             <SelectTrigger className="w-[140px]">
               <SelectValue placeholder="Tipo" />
@@ -152,69 +152,74 @@ export const TransactionList = () => {
           </div>
         ) : (
           <div className="space-y-3">
-            {transactions.map((transaction: any) => (
-              <div key={transaction._id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50">
-                <div className="flex items-center space-x-4 flex-1 min-w-0">
-                  <div className={`p-3 rounded-full ${
-                    transaction.type === 'income' 
-                      ? 'bg-success/10 text-success' 
-                      : 'bg-expense/10 text-expense'
-                  }`}>
-                    {transaction.type === 'income' ? <ArrowUpRight className="h-4 w-4" /> : <ArrowDownRight className="h-4 w-4" />}
+            {transactions.map((transaction: any) => {
+
+              const isIncome = transaction.type === 'income' || transaction.type === 'CREDIT';
+
+              return (
+                <div key={transaction._id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50">
+                  <div className="flex items-center space-x-4 flex-1 min-w-0">
+                    <div className={`p-3 rounded-full ${
+                      isIncome 
+                        ? 'bg-success/10 text-success' 
+                        : 'bg-expense/10 text-expense'
+                    }`}>
+                      {isIncome ? <ArrowUpRight className="h-4 w-4" /> : <ArrowDownRight className="h-4 w-4" />}
+                    </div>
+                    
+                    <div className="min-w-0">
+                      <p className="font-medium truncate">{transaction.description || getCategoryLabel(transaction.category)}</p>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <Badge variant="secondary" className="text-xs">
+                          {getCategoryLabel(transaction.category)}
+                        </Badge>
+                        <span className="text-xs text-muted-foreground">
+                          {format(new Date(transaction.date), 'dd/MM/yyyy', { locale: ptBR })}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                   
-                  <div className="min-w-0">
-                    <p className="font-medium truncate">{transaction.description || getCategoryLabel(transaction.category)}</p>
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <Badge variant="secondary" className="text-xs">
-                        {getCategoryLabel(transaction.category)}
-                      </Badge>
-                      <span className="text-xs text-muted-foreground">
-                        {format(new Date(transaction.date), 'dd/MM/yyyy', { locale: ptBR })}
-                      </span>
-                    </div>
+                  <div className="flex items-center gap-4 ml-4">
+                      <div className={`text-lg font-semibold text-right ${
+                          isIncome ? 'text-success' : 'text-expense'
+                      }`}>
+                          {isIncome ? '+' : '-'}
+                          R$ {transaction.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                      </div>
+
+                      <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                              <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                              >
+                                  <Trash2 className="h-4 w-4" />
+                              </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                              <AlertDialogHeader>
+                                  <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                      Esta ação não pode ser desfeita. Isso irá deletar permanentemente a transação.
+                                  </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                  <AlertDialogAction
+                                      onClick={() => deleteTransactionMutation.mutate(transaction._id)}
+                                      className="bg-destructive hover:bg-destructive/90"
+                                  >
+                                      {deleteTransactionMutation.isPending ? "Deletando..." : "Deletar"}
+                                  </AlertDialogAction>
+                              </AlertDialogFooter>
+                          </AlertDialogContent>
+                      </AlertDialog>
                   </div>
                 </div>
-                
-                <div className="flex items-center gap-4 ml-4">
-                    <div className={`text-lg font-semibold text-right ${
-                        transaction.type === 'income' ? 'text-success' : 'text-expense'
-                    }`}>
-                        {transaction.type === 'income' ? '+' : '-'}
-                        R$ {transaction.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                    </div>
-
-                    <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-                            >
-                                <Trash2 className="h-4 w-4" />
-                            </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                            <AlertDialogHeader>
-                                <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                    Esta ação não pode ser desfeita. Isso irá deletar permanentemente a transação.
-                                </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                <AlertDialogAction
-                                    onClick={() => deleteTransactionMutation.mutate(transaction._id)}
-                                    className="bg-destructive hover:bg-destructive/90"
-                                >
-                                    {deleteTransactionMutation.isPending ? "Deletando..." : "Deletar"}
-                                </AlertDialogAction>
-                            </AlertDialogFooter>
-                        </AlertDialogContent>
-                    </AlertDialog>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </CardContent>
