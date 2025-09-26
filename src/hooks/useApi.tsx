@@ -86,7 +86,7 @@ export const useCreateTransaction = () => {
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: apiService.createTransaction,
+    mutationFn: (data: any) => apiService.createTransaction(data),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
       queryClient.invalidateQueries({ queryKey: ['dashboard'] });
@@ -136,7 +136,7 @@ export const useDeleteTransaction = () => {
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: apiService.deleteTransaction,
+    mutationFn: (id: string) => apiService.deleteTransaction(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
       queryClient.invalidateQueries({ queryKey: ['dashboard'] });

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +18,7 @@ import { useTransactions, useDeleteTransaction, useTransactionCategories  } from
 import { usePagination, DOTS } from "@/hooks/use-pagination";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { useDebounce } from "@/hooks/use-debounce";
 
 const getCategoryLabel = (category: string) => {
   const categoryMap: { [key: string]: string } = {
@@ -38,15 +39,17 @@ const getCategoryLabel = (category: string) => {
 };
 
 export const TransactionList = () => {
-  const [search, setSearch] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [page, setPage] = useState(1);
 
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
   const queryParams = {
     page,
     limit: 10,
-    search: search || undefined,
+    search: debouncedSearchTerm || undefined,
     type: typeFilter !== "all" ? typeFilter : undefined,
     category: categoryFilter !== "all" ? categoryFilter : undefined,
   };
@@ -68,9 +71,12 @@ export const TransactionList = () => {
     siblingCount: 1,
   });
 
-  // 3.3. Função unificada para mudança de página.
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearchTerm, typeFilter, categoryFilter]);
+
+
   const handlePageChange = (newPage: number) => {
-    // Garante que a nova página esteja dentro dos limites válidos.
     if (newPage >= 1 && newPage <= pagination.totalPages) {
       setPage(newPage);
     }
@@ -89,18 +95,18 @@ export const TransactionList = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Transações</CardTitle>
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 text-muted-foreground transform -translate-y-1/2" />
-            <Input
-              placeholder="Buscar transações..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-          
+          <CardTitle>Transações</CardTitle>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 text-muted-foreground transform -translate-y-1/2" />
+              <Input
+                placeholder="Buscar transações..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            
           <Select value={typeFilter} onValueChange={setTypeFilter}>
             <SelectTrigger className="w-[140px]">
               <SelectValue placeholder="Tipo" />
