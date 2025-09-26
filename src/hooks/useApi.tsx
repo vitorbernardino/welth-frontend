@@ -184,9 +184,7 @@ export const useSyncAllInvestments = () => {
   const { toast } = useToast();
 
   return useMutation({
-    // A função de mutação é assíncrona para orquestrar múltiplas chamadas.
     mutationFn: async () => {
-      // Passo 1: Buscar todas as conexões do usuário para obter os IDs (itemId).
       const connectionsResponse = await apiService.getConnections();
       if (!connectionsResponse.success || !connectionsResponse.data) {
         throw new Error("Falha ao buscar conexões para sincronização.");
@@ -201,23 +199,18 @@ export const useSyncAllInvestments = () => {
         return { totalSynced: 0 };
       }
 
-      // Passo 2: Criar um array de promessas, uma para cada chamada de sincronização de investimentos.
       const syncPromises = connections.map(connection =>
         apiService.syncInvestments(connection.itemId)
       );
 
-      // Passo 3: Executar todas as promessas em paralelo para maior eficiência.
       const results = await Promise.all(syncPromises);
       
-      // Opcional: Agregar resultados para um feedback mais detalhado.
       const totalCreated = results.reduce((sum, res) => sum + (res.data.investmentsCreated || 0), 0);
       const totalUpdated = results.reduce((sum, res) => sum + (res.data.investmentsUpdated || 0), 0);
 
       return { totalSynced: connections.length, totalCreated, totalUpdated };
     },
     onSuccess: (data) => {
-      // Passo 4: Após o sucesso de todas as sincronizações, invalidar a query de investimentos
-      // para que o react-query busque os dados atualizados e recarregue a tela.
       queryClient.invalidateQueries({ queryKey: ['investments'] });
       toast({
         title: "Sincronização de Investimentos Concluída!",
@@ -355,7 +348,7 @@ export const useSyncTransactions = () => {
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: apiService.syncTransactions,
+    mutationFn: (itemId: string) => apiService.syncTransactions(itemId),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
       queryClient.invalidateQueries({ queryKey: ['dashboard'] });

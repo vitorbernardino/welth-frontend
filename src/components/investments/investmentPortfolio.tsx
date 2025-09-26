@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Search, RefreshCw, Package, Loader2 } from "lucide-react";
 import { InvestmentSummary } from "./InvestmentSummary";
 import { InvestmentTypeSection } from "./InvestmentTypeSection";
-import { useToast } from "@/hooks/use-toast";
 import { useInvestments, useSyncAllInvestments  } from "@/hooks/useApi";
 
 export const InvestmentPortfolio = () => {

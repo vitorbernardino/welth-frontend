@@ -94,7 +94,7 @@ export const Header = ({ activeTab, onTabChange }: HeaderProps) => {
                 <User className="mr-2 h-4 w-4" />
                 <span>Perfil</span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onTabChange?.('connections')}>
+              <DropdownMenuItem onClick={() => navigate('/conexoes')}>
                 <Link2 className="mr-2 h-4 w-4" />
                 <span>Conexões</span>
               </DropdownMenuItem>

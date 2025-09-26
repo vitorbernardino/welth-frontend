@@ -12,6 +12,7 @@ import Dashboard from "./pages/Dashboard";
 import Spreadsheet from "./pages/Spreadsheet";
 import Transactions from "./pages/Transactions";
 import Investments from "./pages/Investments";
+import BankConnections from "./pages/BankConnection";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -47,6 +48,13 @@ const App = () => (
                 <Investments />
               </ProtectedRoute>
             } />
+
+            <Route path="/conexoes" element={
+              <ProtectedRoute>
+                <BankConnections />
+              </ProtectedRoute>
+            } />
+
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
