@@ -80,7 +80,6 @@ export const MonthlySpreadsheet = () => {
             },
             onError: (error) => {
                 console.error("Erro ao atualizar o dia:", error);
-                // Idealmente, exibir um toast de erro para o usuário
             }
         });
     };
@@ -140,7 +139,6 @@ export const MonthlySpreadsheet = () => {
         );
     };
 
-    // Renderiza o estado de carregamento
     if (isLoading) {
         return (
             <Card className="w-full">
@@ -157,7 +155,6 @@ export const MonthlySpreadsheet = () => {
         );
     }
     
-    // Renderiza o estado de erro
     if (error) {
         return (
              <Card className="w-full">
@@ -174,7 +171,6 @@ export const MonthlySpreadsheet = () => {
         )
     }
 
-    // Renderiza o estado vazio se não houver meses
     if (months.length === 0) {
         return (
             <Card className="w-full">
@@ -250,18 +246,20 @@ export const MonthlySpreadsheet = () => {
                                     <AccordionContent className="px-6 pb-6">
                                         <div className="space-y-4">
                                             {/* Header */}
-                                            <div className="grid grid-cols-5 gap-2 p-3 bg-muted/50 rounded-lg">
+                                            <div className="grid grid-cols-6 gap-2 p-3 bg-muted/50 rounded-lg">
                                                 <div className="text-xs font-semibold text-center">Data</div>
                                                 <div className="text-xs font-semibold text-center text-income">Entrada</div>
                                                 <div className="text-xs font-semibold text-center text-expense">Saída</div>
                                                 <div className="text-xs font-semibold text-center">Saldo</div>
+                                                {/* Adicionar o header da nova coluna */}
+                                                <div className="text-xs font-semibold text-center text-blue-500">Saldo Projetado</div>
                                                 <div className="text-xs font-semibold text-center">Status</div>
                                             </div>
 
                                             {/* Data rows */}
                                             <div className="space-y-1 max-h-[400px] overflow-y-auto">
                                                 {monthData.dailyData.map((day, dayIndex) => (
-                                                    <div key={day.day} className="grid grid-cols-5 gap-2 p-2 border border-border/50 rounded hover:bg-muted/30 transition-colors">
+                                                    <div key={day.day} className="grid grid-cols-6 gap-2 p-2 border border-border/50 rounded hover:bg-muted/30 transition-colors">
                                                         <div className="text-xs font-medium text-center flex items-center justify-center">
                                                             {day.day.toString().padStart(2, '0')}
                                                         </div>
@@ -284,6 +282,13 @@ export const MonthlySpreadsheet = () => {
                                                             (day.balance || 0) >= 0 ? 'text-success bg-success/10' : 'text-expense bg-expense/10'
                                                         }`}>
                                                             R$ {(day.balance || 0).toFixed(2)}
+                                                        </div>
+
+                                                        {/* Adicionar a célula para exibir o Saldo Projetado */}
+                                                        <div className={`h-8 flex items-center justify-center text-xs font-medium px-2 rounded ${
+                                                            (day.calculatedBalance || 0) >= 0 ? 'text-blue-500 bg-blue-500/10' : 'text-expense bg-expense/10'
+                                                        }`}>
+                                                            R$ {(day.calculatedBalance || 0).toFixed(2)}
                                                         </div>
                                                         
                                                         <div className="flex items-center justify-center">
