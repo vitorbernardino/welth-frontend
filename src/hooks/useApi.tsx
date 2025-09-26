@@ -47,6 +47,14 @@ export const useTransactions = (params?: any) => {
   });
 };
 
+export const useTransactionCategories = () => {
+  return useQuery({
+    queryKey: ['transaction-categories'],
+    queryFn: () => apiService.getTransactionCategories(),
+    staleTime: 10 * 60 * 1000,
+  });
+};
+
 export const useRecentTransactions = () => {
   return useQuery({
     queryKey: ['transactions', 'recent'],

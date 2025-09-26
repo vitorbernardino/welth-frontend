@@ -1,11 +1,21 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+  PaginationEllipsis
+} from "@/components/ui/pagination";
 import { Search, ArrowUpRight, ArrowDownRight, Loader2 } from "lucide-react";
-import { useTransactions, useDeleteTransaction } from "@/hooks/useApi";
+import { useTransactions, useDeleteTransaction, useTransactionCategories  } from "@/hooks/useApi";
+import { usePagination, DOTS } from "@/hooks/use-pagination";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -44,8 +54,27 @@ export const TransactionList = () => {
   const { data: transactionsData, isLoading, error } = useTransactions(queryParams);
   const deleteTransactionMutation = useDeleteTransaction();
 
+  const { data: categoriesResponse } = useTransactionCategories();
+  const categories = categoriesResponse?.data || [];
+
+
   const transactions = transactionsData?.data || [];
 
+  const pagination = transactionsData?.pagination ?? { page: 1, totalPages: 1 };
+
+  const paginationRange = usePagination({
+    currentPage: pagination.page,
+    totalPageCount: pagination.totalPages,
+    siblingCount: 1,
+  });
+
+  // 3.3. Função unificada para mudança de página.
+  const handlePageChange = (newPage: number) => {
+    // Garante que a nova página esteja dentro dos limites válidos.
+    if (newPage >= 1 && newPage <= pagination.totalPages) {
+      setPage(newPage);
+    }
+  };
   if (isLoading) {
     return (
       <Card>
@@ -84,16 +113,16 @@ export const TransactionList = () => {
           </Select>
 
           <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-            <SelectTrigger className="w-[150px]">
+            <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Categoria" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Todas</SelectItem>
-              <SelectItem value="salary">Salário</SelectItem>
-              <SelectItem value="food">Alimentação</SelectItem>
-              <SelectItem value="transport">Transporte</SelectItem>
-              <SelectItem value="bills">Contas</SelectItem>
-              <SelectItem value="other">Outros</SelectItem>
+              <SelectItem value="all">Todas as categorias</SelectItem>
+              {categories.map((category) => (
+                <SelectItem key={category} value={category}>
+                  {getCategoryLabel(category)}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -145,6 +174,48 @@ export const TransactionList = () => {
           </div>
         )}
       </CardContent>
+
+      {pagination.totalPages > 1 && (
+        <CardFooter className="flex items-center justify-center border-t pt-6">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#"
+                  onClick={(e) => { e.preventDefault(); handlePageChange(page - 1); }}
+                  className={page === 1 ? 'pointer-events-none opacity-50' : ''}
+                />
+              </PaginationItem>
+
+              {paginationRange?.map((pageNumber, index) => {
+                if (pageNumber === DOTS) {
+                  return <PaginationItem key={`dots-${index}`}><PaginationEllipsis /></PaginationItem>;
+                }
+
+                return (
+                  <PaginationItem key={pageNumber}>
+                    <PaginationLink
+                      href="#"
+                      isActive={pageNumber === page}
+                      onClick={(e) => { e.preventDefault(); handlePageChange(pageNumber as number); }}
+                    >
+                      {pageNumber}
+                    </PaginationLink>
+                  </PaginationItem>
+                );
+              })}
+
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  onClick={(e) => { e.preventDefault(); handlePageChange(page + 1); }}
+                  className={page === pagination.totalPages ? 'pointer-events-none opacity-50' : ''}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </CardFooter>
+      )}
     </Card>
   );
 };

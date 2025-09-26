@@ -190,8 +190,12 @@ class ApiService {
   }
 
   async getRecentTransactions(): Promise<ApiResponse<any[]>> {
-    console.log('Get recent transactions request');
     const response = await this.api.get('/transactions/recent');
+    return response.data;
+  }
+
+  async getTransactionCategories(): Promise<ApiResponse<string[]>> {
+    const response = await this.api.get('/transactions/categories');
     return response.data;
   }
 
