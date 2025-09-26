@@ -5,6 +5,17 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
   Pagination,
   PaginationContent,
   PaginationItem,
@@ -13,7 +24,7 @@ import {
   PaginationPrevious,
   PaginationEllipsis
 } from "@/components/ui/pagination";
-import { Search, ArrowUpRight, ArrowDownRight, Loader2 } from "lucide-react";
+import { Search, ArrowUpRight, ArrowDownRight, Loader2, Trash2 } from "lucide-react";
 import { useTransactions, useDeleteTransaction, useTransactionCategories  } from "@/hooks/useApi";
 import { usePagination, DOTS } from "@/hooks/use-pagination";
 import { format } from "date-fns";
@@ -142,23 +153,19 @@ export const TransactionList = () => {
         ) : (
           <div className="space-y-3">
             {transactions.map((transaction: any) => (
-              <div key={transaction._id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50">
-                <div className="flex items-center space-x-4">
+              <div key={transaction._id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50">
+                <div className="flex items-center space-x-4 flex-1 min-w-0">
                   <div className={`p-3 rounded-full ${
                     transaction.type === 'income' 
                       ? 'bg-success/10 text-success' 
                       : 'bg-expense/10 text-expense'
                   }`}>
-                    {transaction.type === 'income' ? (
-                      <ArrowUpRight className="h-4 w-4" />
-                    ) : (
-                      <ArrowDownRight className="h-4 w-4" />
-                    )}
+                    {transaction.type === 'income' ? <ArrowUpRight className="h-4 w-4" /> : <ArrowDownRight className="h-4 w-4" />}
                   </div>
                   
-                  <div>
-                    <p className="font-medium">{transaction.description || getCategoryLabel(transaction.category)}</p>
-                    <div className="flex items-center gap-2">
+                  <div className="min-w-0">
+                    <p className="font-medium truncate">{transaction.description || getCategoryLabel(transaction.category)}</p>
+                    <div className="flex items-center gap-2 flex-wrap">
                       <Badge variant="secondary" className="text-xs">
                         {getCategoryLabel(transaction.category)}
                       </Badge>
@@ -169,11 +176,42 @@ export const TransactionList = () => {
                   </div>
                 </div>
                 
-                <div className={`text-lg font-semibold ${
-                  transaction.type === 'income' ? 'text-success' : 'text-expense'
-                }`}>
-                  {transaction.type === 'income' ? '+' : '-'}
-                  R$ {transaction.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                <div className="flex items-center gap-4 ml-4">
+                    <div className={`text-lg font-semibold text-right ${
+                        transaction.type === 'income' ? 'text-success' : 'text-expense'
+                    }`}>
+                        {transaction.type === 'income' ? '+' : '-'}
+                        R$ {transaction.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                    </div>
+
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                            >
+                                <Trash2 className="h-4 w-4" />
+                            </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    Esta ação não pode ser desfeita. Isso irá deletar permanentemente a transação.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                <AlertDialogAction
+                                    onClick={() => deleteTransactionMutation.mutate(transaction._id)}
+                                    className="bg-destructive hover:bg-destructive/90"
+                                >
+                                    {deleteTransactionMutation.isPending ? "Deletando..." : "Deletar"}
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
                 </div>
               </div>
             ))}
