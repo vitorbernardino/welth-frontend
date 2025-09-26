@@ -140,8 +140,7 @@ class ApiService {
     return response.data;
   }
 
-  async getPluggyToken(userId: string, itemId?: string): Promise<ApiResponse<{ token: string; sdk: string }>> {
-    console.log('Get Pluggy token request for user:', userId);
+  async getPluggyToken(userId: string, itemId?: string): Promise<{ accessToken: string }> {
     const params = itemId ? { itemId } : {};
     const response = await this.api.post(`/users/${userId}/token`, {}, { params });
     return response.data;

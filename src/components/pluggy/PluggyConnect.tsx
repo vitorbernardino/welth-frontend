@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Building2, Shield, Loader2 } from "lucide-react";
@@ -18,101 +18,98 @@ declare global {
   }
 }
 
+const loadPluggyScript = () => {
+  return new Promise<void>((resolve, reject) => {
+    if (window.PluggyConnect) {
+      return resolve();
+    }
+
+    const script = document.createElement('script');
+    
+    script.src = 'https://cdn.pluggy.ai/pluggy-connect/v2.8.2/pluggy-connect.js';
+    script.async = true;
+
+    script.onload = () => {
+      console.log("Pluggy script loaded successfully.");
+      resolve();
+    };
+
+    script.onerror = () => {
+      console.error("Failed to load Pluggy script.");
+      reject(new Error("Não foi possível carregar o script de conexão. Verifique sua conexão com a internet."));
+    };
+
+    document.head.appendChild(script);
+  });
+};
+
+
 export const PluggyConnect = ({ variant = "default", className, onConnectionSuccess }: PluggyConnectProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [pluggyToken, setPluggyToken] = useState<string | null>(null);
   const { toast } = useToast();
 
-  useEffect(() => {
-    // Load Pluggy SDK
-    if (!window.PluggyConnect) {
-      const script = document.createElement('script');
-      script.src = 'https://cdn.pluggy.ai/widget/pluggy-connect.umd.js';
-      script.async = true;
-      document.head.appendChild(script);
-    }
+  const handleSuccess = useCallback((itemData: any) => {
+    toast({
+      title: "Conexão estabelecida!",
+      description: `${itemData.connector.name} foi conectado com sucesso.`,
+    });
+    setIsOpen(false);
+    onConnectionSuccess?.();
+  }, [onConnectionSuccess, toast]);
+
+  const handleError = useCallback((error: any) => {
+    console.error('Pluggy connection error:', error);
+    toast({
+      title: "Erro na conexão",
+      description: error.message || "Não foi possível conectar com a instituição financeira.",
+      variant: "destructive",
+    });
+    setIsOpen(false);
+  }, [toast]);
+  
+  const handleExit = useCallback(() => {
+    setIsOpen(false);
   }, []);
 
-  const fetchPluggyToken = async () => {
-    try {
-      setIsLoading(true);
-      const currentUser = authService.getCurrentUser();
-      
-      if (!currentUser) {
-        throw new Error('User not authenticated');
-      }
-
-      const response = await apiService.getPluggyToken(currentUser.id);
-      
-      if (response.success) {
-        setPluggyToken(response.data.token);
-        return response.data.token;
-      }
-      
-      throw new Error(response.message || 'Failed to get Pluggy token');
-    } catch (error: any) {
-      toast({
-        title: "Erro",
-        description: error.message || "Não foi possível obter token de conexão",
-        variant: "destructive",
-      });
-      return null;
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handleConnect = async () => {
-    const token = await fetchPluggyToken();
-    
-    if (!token || !window.PluggyConnect) {
-      toast({
-        title: "Erro",
-        description: "Não foi possível carregar o widget de conexão",
-        variant: "destructive",
-      });
-      return;
-    }
+    setIsLoading(true);
 
     try {
+      await loadPluggyScript();
+
+      const currentUser = authService.getCurrentUser();
+      if (!currentUser) {
+        throw new Error('Usuário não autenticado');
+      }
+      
+      const response = await apiService.getPluggyToken(currentUser.id);
+      const connectToken = response?.accessToken;
+
+      if (!connectToken) {
+        console.error("A resposta da API não continha um 'accessToken' válido:", response);
+        throw new Error('Falha ao obter o token de conexão da API.');
+      }
+
       const pluggyConnect = new window.PluggyConnect({
-        token: token,
-        includeSandbox: false,
-        updateItem: null,
+        connectToken: connectToken,
+        includeSandbox: true,
+        events: {
+          onSuccess: handleSuccess,
+          onError: handleError,
+          onExit: handleExit,
+        }
       });
 
       pluggyConnect.init();
 
-      pluggyConnect.onSuccess((itemData: any) => {
-        toast({
-          title: "Conexão estabelecida!",
-          description: `${itemData.connector.name} foi conectado com sucesso.`,
-        });
-        
-        setIsOpen(false);
-        onConnectionSuccess?.();
-      });
-
-      pluggyConnect.onError((error: any) => {
-        console.error('Pluggy connection error:', error);
-        toast({
-          title: "Erro na conexão",
-          description: "Não foi possível conectar com a instituição financeira.",
-          variant: "destructive",
-        });
-      });
-
-      pluggyConnect.onExit(() => {
-        console.log('User exited Pluggy widget');
-      });
-    } catch (error) {
-      console.error('Error initializing Pluggy:', error);
+    } catch (error: any) {
       toast({
-        title: "Erro",
-        description: "Erro ao inicializar widget de conexão",
+        title: "Erro ao Iniciar Conexão",
+        description: error.message,
         variant: "destructive",
       });
+      setIsLoading(false); 
     }
   };
 
@@ -139,10 +136,9 @@ export const PluggyConnect = ({ variant = "default", className, onConnectionSucc
           <div className="flex items-start gap-3">
             <Shield className="h-5 w-5 text-primary mt-0.5" />
             <div>
-              <h4 className="font-medium text-sm">Segurança e Privacidade</h4>
+              <h4 className="font-medium text-sm">Segurança de Nível Bancário</h4>
               <p className="text-xs text-muted-foreground mt-1">
-                Suas credenciais são protegidas com criptografia de nível bancário. 
-                Tecnologia Open Banking certificada pelo Banco Central.
+                Suas credenciais são criptografadas e nunca são compartilhadas. Conexão via Open Finance, regulado pelo Banco Central.
               </p>
             </div>
           </div>
@@ -161,14 +157,14 @@ export const PluggyConnect = ({ variant = "default", className, onConnectionSucc
           ) : (
             <>
               <Shield className="h-4 w-4 mr-2" />
-              Conectar com Segurança
+              Continuar com Segurança
             </>
           )}
         </Button>
 
         <div className="text-center text-xs text-muted-foreground mt-4 pt-4 border-t">
           <p>
-            Conexão protegida por SSL. Tecnologia Open Banking certificada pelo Banco Central.
+            Ao continuar, você concorda em conectar sua conta através da Pluggy.
           </p>
         </div>
       </DialogContent>
