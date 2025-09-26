@@ -323,11 +323,9 @@ export const useDeleteConnection = () => {
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: apiService.deleteConnection,
+    mutationFn: (id: string) => apiService.deleteConnection(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['connections'] });
-      queryClient.invalidateQueries({ queryKey: ['transactions'] });
-      queryClient.invalidateQueries({ queryKey: ['investments'] });
       toast({
         title: "Conexão removida",
         description: "A conexão foi removida com sucesso.",
