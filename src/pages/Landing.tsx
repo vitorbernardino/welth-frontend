@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, BarChart3, PieChart, TrendingUp, Shield, Users, Calculator } from "lucide-react";
+import { ArrowRight, BarChart3, PieChart, TrendingUp, Shield, Users, Link2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import WelthIcon from "@/assets/welth-icon.svg";
 
 const Landing = () => {
   return (
@@ -11,14 +12,9 @@ const Landing = () => {
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <Calculator className="h-8 w-8" />
+              <img src={WelthIcon} alt="Welth Logo" className="h-8 w-8" />
               <span className="text-xl font-bold">Welth</span>
             </div>
-            <nav className="hidden md:flex items-center space-x-8">
-              <a href="#features" className="hover:opacity-80">Recursos</a>
-              <a href="#about" className="hover:opacity-80">Sobre</a>
-              <a href="#contact" className="hover:opacity-80">Contato</a>
-            </nav>
             <div className="space-x-4">
               <Link to="/login">
                 <Button variant="secondary" className="bg-background text-foreground border border-border hover:bg-secondary">
@@ -97,10 +93,10 @@ const Landing = () => {
             
             <Card>
               <CardContent className="p-8 text-center">
-                <Shield className="h-12 w-12 mx-auto mb-4 text-primary" />
-                <h3 className="text-xl font-semibold mb-3">Reserva de Emergência</h3>
+                <Link2 className="h-12 w-12 mx-auto mb-4 text-primary" />
+                <h3 className="text-xl font-semibold mb-3">Conexão Bancária Segura</h3>
                 <p className="text-muted-foreground">
-                  Planeje e acompanhe sua reserva com cálculos automáticos de rentabilidade.
+                  Conecte suas contas e veja transações e investimentos em um só lugar, em tempo real.
                 </p>
               </CardContent>
             </Card>
@@ -175,39 +171,15 @@ const Landing = () => {
       {/* Footer */}
       <footer id="contact" className="bg-secondary py-12">
         <div className="container mx-auto px-6">
-          <div className="grid md:grid-cols-4 gap-8">
+          <div className="flex justify-center text-center">
             <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <Calculator className="h-6 w-6" />
+              <div className="flex items-center justify-center space-x-2 mb-4">
+                <img src={WelthIcon} alt="Welth Logo" className="h-6 w-6" />
                 <span className="text-lg font-bold">Welth</span>
               </div>
               <p className="text-muted-foreground">
                 Sua plataforma completa de gestão financeira pessoal.
               </p>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Produto</h4>
-              <ul className="space-y-2 text-muted-foreground">
-                <li><a href="#features" className="hover:text-primary">Recursos</a></li>
-                <li><a href="#" className="hover:text-primary">Preços</a></li>
-                <li><a href="#" className="hover:text-primary">Segurança</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Empresa</h4>
-              <ul className="space-y-2 text-muted-foreground">
-                <li><a href="#about" className="hover:text-primary">Sobre</a></li>
-                <li><a href="#" className="hover:text-primary">Blog</a></li>
-                <li><a href="#" className="hover:text-primary">Carreiras</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Suporte</h4>
-              <ul className="space-y-2 text-muted-foreground">
-                <li><a href="#" className="hover:text-primary">Central de Ajuda</a></li>
-                <li><a href="#contact" className="hover:text-primary">Contato</a></li>
-                <li><a href="#" className="hover:text-primary">Status</a></li>
-              </ul>
             </div>
           </div>
           <div className="border-t border-border mt-8 pt-8 text-center text-muted-foreground">
