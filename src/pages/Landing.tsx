@@ -157,7 +157,7 @@ const Landing = () => {
             Comece a transformar suas finanças hoje
           </h2>
           <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Junte-se a milhares de usuários que já tomaram controle de suas finanças com nossa plataforma.
+            Junte-se a usuários que já tomaram controle de suas finanças com nossa plataforma.
           </p>
           <Link to="/register">
             <Button size="lg" className="bg-background text-foreground hover:bg-secondary border border-border">
