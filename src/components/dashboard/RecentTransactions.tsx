@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowUpRight, ArrowDownRight, AlertCircle } from "lucide-react";
 import { useDashboard } from "@/hooks/useApi";
 import { useNavigate } from "react-router-dom";
-import { format, parseISO } from "date-fns";
+import { format, parse } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
@@ -85,22 +85,18 @@ export const RecentTransactions = () => {
   const { data: dashboardData, isLoading, error } = useDashboard();
   const navigate = useNavigate();
 
-  // Estado de carregamento
   if (isLoading) {
     return <LoadingSkeleton />;
   }
 
-  // Estado de erro
   if (error) {
     return <ErrorState error={error} />;
   }
 
-  // Verificar se os dados foram retornados com sucesso
   if (!dashboardData?.success || !dashboardData?.data) {
     return <ErrorState error={{ message: 'Dados não encontrados' }} />;
   }
 
-  // Obter transações recentes do dashboard
   const recentTransactions = dashboardData.data.recentTransactions || [];
 
   if (recentTransactions.length === 0) {
@@ -114,7 +110,7 @@ export const RecentTransactions = () => {
 
   const formatDate = (dateString: string) => {
     try {
-      const date = parseISO(dateString);
+      const date = parse(dateString, 'dd/MM/yyyy', new Date());
       return format(date, 'dd/MM', { locale: ptBR });
     } catch {
       return 'Data inválida';
