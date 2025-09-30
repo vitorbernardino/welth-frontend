@@ -75,25 +75,45 @@ const ErrorState = ({ error }: { error: any }) => (
   </Card>
 );
 
+const CustomLegend = (props: any) => {
+  const { payload } = props;
+
+  const formatCurrency = (value: number) => {
+    return `R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+  };
+
+  return (
+    <div className="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-2">
+      {payload.map((entry: any, index: number) => {
+        const item = entry.payload.payload;
+        return (
+          <div key={`item-${index}`} className="flex items-center text-xs">
+            <div className="w-2 h-2 rounded-full mr-2" style={{ backgroundColor: entry.color }} />
+            <span className="text-muted-foreground mr-1">{item.name}:</span>
+            <span className="font-medium text-foreground">{formatCurrency(item.value)}</span>
+            <span className="text-muted-foreground ml-1">({item.percentage.toFixed(1)}%)</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
 export const ExpenseBreakdown = () => {
   const { data: dashboardData, isLoading, error } = useDashboard();
 
-  // Estado de carregamento
   if (isLoading) {
     return <LoadingSkeleton />;
   }
 
-  // Estado de erro
   if (error) {
     return <ErrorState error={error} />;
   }
 
-  // Verificar se os dados foram retornados com sucesso
   if (!dashboardData?.success || !dashboardData?.data) {
     return <ErrorState error={{ message: 'Dados não encontrados' }} />;
   }
 
-  // Processar dados das despesas por categoria
   const expensesByCategory = dashboardData.data.expensesByCategory || [];
   
   if (expensesByCategory.length === 0) {
@@ -126,10 +146,6 @@ export const ExpenseBreakdown = () => {
     return null;
   };
 
-  const renderLabel = ({ name, percentage }: any) => {
-    return `${name}: ${percentage.toFixed(1)}%`;
-  };
-
   return (
     <Card>
       <CardHeader>
@@ -143,8 +159,7 @@ export const ExpenseBreakdown = () => {
               cx="50%"
               cy="50%"
               labelLine={false}
-              label={renderLabel}
-              outerRadius={80}
+              outerRadius={100}
               fill="#8884d8"
               dataKey="value"
             >
@@ -153,15 +168,7 @@ export const ExpenseBreakdown = () => {
               ))}
             </Pie>
             <Tooltip content={renderCustomTooltip} />
-            <Legend 
-              verticalAlign="bottom" 
-              height={36}
-              formatter={(value, entry: any) => (
-                <span style={{ color: entry.color }}>
-                  {value}: {formatCurrency(entry.payload?.value || 0)}
-                </span>
-              )}
-            />
+            <Legend content={<CustomLegend />} />
           </PieChart>
         </ResponsiveContainer>
       </CardContent>
