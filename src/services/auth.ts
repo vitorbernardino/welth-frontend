@@ -14,10 +14,8 @@ class AuthService {
       const response = await apiService.login(email, password);
       
       if (response.success && response.data) {
-        const { user, access_token } = response.data;
+        const { user } = response.data;
         
-        // Store authentication data
-        localStorage.setItem('access_token', access_token);
         localStorage.setItem('isAuthenticated', 'true');
         localStorage.setItem('userEmail', user.email);
         localStorage.setItem('userName', user.name);
@@ -31,6 +29,7 @@ class AuthService {
       throw new Error(error.response?.data?.message || error.message || 'Login failed');
     }
   }
+
 
   async register(name: string, email: string, password: string): Promise<User> {
     try {
@@ -50,7 +49,6 @@ class AuthService {
     try {
       await apiService.logout();
     } catch (error) {
-      // Even if logout fails on server, clear local storage
       console.error('Logout error:', error);
     } finally {
       this.clearAuthData();
@@ -58,7 +56,6 @@ class AuthService {
   }
 
   clearAuthData(): void {
-    localStorage.removeItem('access_token');
     localStorage.removeItem('isAuthenticated');
     localStorage.removeItem('userEmail');
     localStorage.removeItem('userName');
@@ -66,8 +63,7 @@ class AuthService {
   }
 
   isAuthenticated(): boolean {
-    return localStorage.getItem('isAuthenticated') === 'true' && 
-           !!localStorage.getItem('access_token');
+    return localStorage.getItem('isAuthenticated') === 'true'
   }
 
   getCurrentUser(): { id: string; name: string; email: string } | null {

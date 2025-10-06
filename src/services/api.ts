@@ -17,6 +17,7 @@ export interface ApiResponse<T = any> {
 
 class ApiService {
   private api: AxiosInstance;
+  private isRefreshingToken: boolean = false;
 
   constructor() {
     console.log('Inicializando ApiService...');
@@ -40,17 +41,12 @@ class ApiService {
   }
 
   private setupInterceptors() {
-    // Request interceptor para adicionar token
+    // Request interceptor - Removido completamente pois cookies são automáticos
     this.api.interceptors.request.use(
       (config) => {
-        const token = localStorage.getItem('access_token');
-        console.log('Request interceptor - Token exists:', !!token);
-        
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
-        }
-        
-        console.log('Making request to:', config.url, 'with headers:', config.headers);
+        // Não é necessário buscar token do localStorage quando usando cookies
+        // O navegador automaticamente inclui cookies httpOnly nas requisições
+        console.log('Making request to:', config.url);
         return config;
       },
       (error) => {
@@ -71,29 +67,43 @@ class ApiService {
         if (error.response?.status === 401) {
           try {
             console.log('Token expirado, tentando refresh...');
-            await this.refreshToken();
-            
-            // Retry the original request
-            const originalRequest = error.config;
-            if (originalRequest) {
-              const token = localStorage.getItem('access_token');
-              if (token) {
-                originalRequest.headers.Authorization = `Bearer ${token}`;
+            // Flag para evitar múltiplas tentativas de refresh
+            if (!this.isRefreshingToken) {
+              this.isRefreshingToken = true;
+              await this.refreshToken();
+              
+              // Retry the original request
+              const originalRequest = error.config;
+              if (originalRequest) {
+                return this.api.request(originalRequest);
               }
-              return this.api.request(originalRequest);
+            } else {
+              // Se já está fazendo refresh, redireciona para login
+              this.redirectToLogin();
+              return Promise.reject(error);
             }
           } catch (refreshError) {
             console.error('Refresh token falhou:', refreshError);
-            // Redirect to login if refresh fails
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('isAuthenticated');
-            window.location.href = '/login';
+            // Redirecionar para login se refresh falhar
+            this.redirectToLogin();
             return Promise.reject(refreshError);
+          } finally {
+            this.isRefreshingToken = false;
           }
         }
         return Promise.reject(error);
       }
     );
+  }
+
+  // Método auxiliar para redirecionar para login
+  private redirectToLogin(): void {
+    localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userId');
+    
+    window.location.href = '/login';
   }
 
   // Auth Methods
