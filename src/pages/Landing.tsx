@@ -34,12 +34,7 @@ const Landing = () => {
       {/* Hero Section */}
       <section className="relative bg-primary text-primary-foreground py-20 overflow-hidden">
         {/* Background Image */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"
-          style={{
-            backgroundImage: `url('/lovable-uploads/df8852f0-394e-478f-945b-79dc1027500a.png')`
-          }}
-        />
+        <div />
         <div className="relative z-10 container mx-auto px-6">
           <div className="max-w-3xl">
             <h1 className="text-4xl lg:text-6xl font-bold leading-tight mb-6">
