@@ -3,10 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Calculator, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { authService } from "@/services/auth";
+import WelthIcon from "@/assets/welth-icon.svg";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -68,7 +69,8 @@ const Register = () => {
         {/* Logo */}
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center space-x-2 text-2xl font-bold">
-            <Calculator className="h-8 w-8 text-primary" />
+            {/* Ícone da aplicação para consistência visual */}
+            <img src={WelthIcon} alt="Welth" className="h-8 w-8 welth-icon" />
             <span>Welth</span>
           </Link>
           <p className="text-muted-foreground mt-2">
@@ -79,9 +81,7 @@ const Register = () => {
         <Card>
           <CardHeader className="text-center">
             <CardTitle>Criar Conta</CardTitle>
-            <CardDescription>
-              Comece gratuitamente sua jornada financeira
-            </CardDescription>
+            {/* Descrição removida por ser redundante com o texto acima do card */}
           </CardHeader>
           <CardContent>
             <form onSubmit={handleRegister} className="space-y-4">

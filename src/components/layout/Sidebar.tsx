@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { 
-  LayoutDashboard, 
-  Calculator, 
-  ArrowUpDown, 
+import {
+  LayoutDashboard,
+  Calculator,
+  ArrowUpDown,
   TrendingUp,
   Menu,
   X
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-const WelthIcon = "src/assets/welth-icon.svg";
+import WelthIcon from "@/assets/welth-icon.svg";
 
 interface SidebarProps {
   activeTab: string;
@@ -71,13 +71,14 @@ export const Sidebar = ({ activeTab, onTabChange }: SidebarProps) => {
         <div className="flex items-center justify-between">
           {!isCollapsed && (
             <div className="flex items-center gap-2">
-              <img src={WelthIcon} alt="Welth" className="h-8 w-8" />
+              {/* Ícone importado para manter o padrão e facilitar a manutenção */}
+              <img src={WelthIcon} alt="Welth" className="h-8 w-8 welth-icon" />
               <span className="text-xl font-bold text-foreground">Welth</span>
             </div>
           )}
           {isCollapsed && (
             <div className="flex justify-center w-full">
-              <img src={WelthIcon} alt="Welth" className="h-8 w-8" />
+              <img src={WelthIcon} alt="Welth" className="h-8 w-8 welth-icon" />
             </div>
           )}
           <Button
