@@ -5,14 +5,14 @@ import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const COLORS = [
-  'hsl(220, 70%, 50%)',  // Azul
-  'hsl(340, 75%, 50%)',  // Rosa
-  'hsl(45, 90%, 55%)',   // Amarelo
-  'hsl(120, 60%, 50%)',  // Verde
-  'hsl(280, 60%, 55%)',  // Roxo
-  'hsl(15, 80%, 55%)',   // Laranja
-  'hsl(195, 75%, 50%)',  // Ciano
-  'hsl(25, 70%, 50%)'    // Marrom
+  '#6A4C9C', // Roxo
+  '#EF6363', // Coral/Vermelho
+  '#F5C562', // Dourado
+  '#B695C0', // Lavanda
+  '#56A3A6', // Verde-azulado
+  '#82B366', // Verde
+  '#7C98B3', // Azul ardósia
+  '#D98B99'  // Rosa suave
 ];
 
 const getCategoryLabel = (category: string) => {
@@ -152,14 +152,14 @@ export const ExpenseBreakdown = () => {
         <CardTitle className="text-base font-medium">Gastos por Categoria</CardTitle>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer width="100%" height={300}>
+        <ResponsiveContainer width="100%" height={280}>
           <PieChart>
             <Pie
               data={expenseData}
               cx="50%"
-              cy="50%"
+              cy="45%"
               labelLine={false}
-              outerRadius={100}
+              outerRadius={79}
               fill="#8884d8"
               dataKey="value"
             >
