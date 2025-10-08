@@ -69,27 +69,13 @@ class ApiService {
         console.error('Response interceptor error:', error.response?.status, error.message);
         
         if (error.response?.status === 401) {
-          try {
-            console.log('Token expirado, tentando refresh...');
-            await this.refreshToken();
-            
-            // Retry the original request
-            const originalRequest = error.config;
-            if (originalRequest) {
-              const token = localStorage.getItem('access_token');
-              if (token) {
-                originalRequest.headers.Authorization = `Bearer ${token}`;
-              }
-              return this.api.request(originalRequest);
-            }
-          } catch (refreshError) {
-            console.error('Refresh token falhou:', refreshError);
-            // Redirect to login if refresh fails
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('isAuthenticated');
-            window.location.href = '/login';
-            return Promise.reject(refreshError);
-          }
+          console.log('Token inválido, redirecionando para login...');
+          
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('isAuthenticated');
+
+          window.location.href = '/login';
+          return Promise.reject(error);
         }
         return Promise.reject(error);
       }
