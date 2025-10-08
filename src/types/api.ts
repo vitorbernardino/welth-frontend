@@ -75,15 +75,6 @@ export interface DashboardData {
   }>;
 }
 
-export interface RecentTransaction {
-  _id: string;
-  type: 'income' | 'expense';
-  category: string;
-  amount: number;
-  date: string;
-  description: string;
-}
-
 export interface DayData {
   day: number;
   income: number;
@@ -91,7 +82,7 @@ export interface DayData {
   dailySpending: number;
   balance: number;
   calculatedBalance: number;
-  projectedValue: number; 
+  projectedValue: number;
 }
 
 export interface SpreadsheetData {
@@ -106,6 +97,7 @@ export interface SpreadsheetData {
     netBalance: number;
     projectedBalance: number;
   };
+  isHistorical: boolean;
   createdAt: string;
   updatedAt: string;
 }
