@@ -28,14 +28,11 @@ const EmptyState = () => (
 );
 
 export const MonthlySpreadsheet = () => {
-    // Estado para controlar a célula em edição
     const [editingCell, setEditingCell] = useState<string | null>(null);
-    // Estado local para armazenar os dados da planilha
     const [months, setMonths] = useState<SpreadsheetData[]>([]);
+    const [originalCellValue, setOriginalCellValue] = useState<number>(0);
 
-    // Busca os dados de todas as planilhas usando o hook da API
     const { data: spreadsheetResponse, isLoading, error } = useAllSpreadsheets();
-    // Hook para a mutação de atualização de dados de um dia
     const updateDayMutation = useUpdateDayData();
 
     const monthNames = [
@@ -43,10 +40,8 @@ export const MonthlySpreadsheet = () => {
         "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
     ];
 
-    // Efeito para carregar os dados da API no estado local quando a resposta for recebida
     useEffect(() => {
         if (spreadsheetResponse?.success && spreadsheetResponse.data) {
-            // Ordena os meses por ano e mês antes de definir no estado
             const sortedData = [...spreadsheetResponse.data].sort((a, b) => {
                 if (a.year !== b.year) {
                     return a.year - b.year;
@@ -57,12 +52,10 @@ export const MonthlySpreadsheet = () => {
         }
     }, [spreadsheetResponse]);
 
-    // Função para atualizar os dados de um dia específico
     const handleUpdateDay = (monthIndex: number, dayIndex: number, field: keyof DayData, value: number) => {
         const monthData = months[monthIndex];
         const dayData = monthData.dailyData[dayIndex];
 
-        // Cria o payload para a API
         const payload = {
             year: monthData.year,
             month: monthData.month,
@@ -70,10 +63,8 @@ export const MonthlySpreadsheet = () => {
             data: { [field]: value }
         };
 
-        // Chama a mutação para atualizar os dados no backend
         updateDayMutation.mutate(payload, {
             onSuccess: (updatedSpreadsheet) => {
-                // Atualiza o estado local com os dados retornados pela API
                 const updatedMonths = [...months];
                 updatedMonths[monthIndex] = updatedSpreadsheet.data;
                 setMonths(updatedMonths);
@@ -84,7 +75,6 @@ export const MonthlySpreadsheet = () => {
         });
     };
     
-    // Calcula os totais para o resumo do mês
     const getMonthSummary = (monthData: SpreadsheetData) => {
         const totalIncome = monthData.dailyData.reduce((sum, day) => sum + (day.income || 0), 0);
         const totalExpenses = monthData.dailyData.reduce((sum, day) => sum + (day.expenses || 0), 0);
@@ -93,7 +83,6 @@ export const MonthlySpreadsheet = () => {
         return { totalIncome, totalExpenses, finalBalance };
     };
 
-    // Célula editável que salva os dados ao perder o foco ou pressionar Enter
     const EditableCell = ({
         value,
         onSave,
@@ -107,6 +96,14 @@ export const MonthlySpreadsheet = () => {
     }) => {
         const isEditing = editingCell === cellKey;
         
+        const handleSave = (currentValue: number) => {
+            if (currentValue !== originalCellValue) {
+                onSave(currentValue);
+            }
+            setEditingCell(null);
+        };
+
+
         if (isEditing) {
             return (
                 <Input
@@ -115,12 +112,13 @@ export const MonthlySpreadsheet = () => {
                     defaultValue={value}
                     className="h-8 text-xs"
                     onBlur={(e) => {
-                        onSave(parseFloat(e.target.value) || 0);
-                        setEditingCell(null);
+                        handleSave(parseFloat(e.target.value) || 0);
                     }}
                     onKeyDown={(e) => {
                         if (e.key === 'Enter') {
-                            onSave(parseFloat(e.currentTarget.value) || 0);
+                            handleSave(parseFloat(e.currentTarget.value) || 0);
+                        }
+                        if (e.key === 'Escape') {
                             setEditingCell(null);
                         }
                     }}
@@ -132,7 +130,10 @@ export const MonthlySpreadsheet = () => {
         return (
             <div
                 className={`h-8 flex items-center justify-center text-xs cursor-pointer hover:bg-muted/50 rounded px-2 ${className}`}
-                onClick={() => setEditingCell(cellKey)}
+                onClick={() => {
+                    setOriginalCellValue(value);
+                    setEditingCell(cellKey);
+                }}
             >
                 R$ {value.toFixed(2)}
             </div>
@@ -284,7 +285,6 @@ export const MonthlySpreadsheet = () => {
                                                             R$ {(day.balance || 0).toFixed(2)}
                                                         </div>
 
-                                                        {/* Adicionar a célula para exibir o Saldo Projetado */}
                                                         <div className={`h-8 flex items-center justify-center text-xs font-medium px-2 rounded ${
                                                             (day.calculatedBalance || 0) >= 0 ? 'text-blue-500 bg-blue-500/10' : 'text-expense bg-expense/10'
                                                         }`}>
@@ -300,7 +300,6 @@ export const MonthlySpreadsheet = () => {
                                                 ))}
                                             </div>
 
-                                            {/* Month Summary */}
                                             <div className="mt-4 p-4 bg-gradient-to-r from-muted/50 to-muted/30 rounded-lg border">
                                                 <div className="grid grid-cols-3 gap-4 text-sm">
                                                     <div className="text-center">
