@@ -17,7 +17,6 @@ export interface ApiResponse<T = any> {
 
 class ApiService {
   private api: AxiosInstance;
-  private isRefreshing = false;
 
   constructor() {
     console.log('Inicializando ApiService...');
@@ -40,7 +39,27 @@ class ApiService {
     }
   }
 
-private setupInterceptors() {
+  private setupInterceptors() {
+    // Request interceptor para adicionar token
+    this.api.interceptors.request.use(
+      (config) => {
+        const token = localStorage.getItem('access_token');
+        console.log('Request interceptor - Token exists:', !!token);
+        
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+        
+        console.log('Making request to:', config.url, 'with headers:', config.headers);
+        return config;
+      },
+      (error) => {
+        console.error('Request interceptor error:', error);
+        return Promise.reject(error);
+      }
+    );
+
+    // Response interceptor para lidar com tokens expirados
     this.api.interceptors.response.use(
       (response) => {
         console.log('Response received:', response.status, response.data);
@@ -49,39 +68,33 @@ private setupInterceptors() {
       async (error: AxiosError) => {
         console.error('Response interceptor error:', error.response?.status, error.message);
         
-        const originalRequest = error.config;
-        
-        if (error.response?.status === 401 && !this.isRefreshing) {
-          this.isRefreshing = true;
-          
+        if (error.response?.status === 401) {
           try {
             console.log('Token expirado, tentando refresh...');
             await this.refreshToken();
             
+            // Retry the original request
+            const originalRequest = error.config;
             if (originalRequest) {
-              this.isRefreshing = false;
+              const token = localStorage.getItem('access_token');
+              if (token) {
+                originalRequest.headers.Authorization = `Bearer ${token}`;
+              }
               return this.api.request(originalRequest);
             }
           } catch (refreshError) {
             console.error('Refresh token falhou:', refreshError);
-            this.isRefreshing = false;
-            
+            // Redirect to login if refresh fails
+            localStorage.removeItem('access_token');
             localStorage.removeItem('isAuthenticated');
-            localStorage.removeItem('userEmail');
-            localStorage.removeItem('userName');
-            localStorage.removeItem('userId');
-            localStorage.removeItem('userPhoto');
-            
             window.location.href = '/login';
             return Promise.reject(refreshError);
           }
         }
-        
         return Promise.reject(error);
       }
     );
   }
-
 
   // Auth Methods
   async login(email: string, password: string): Promise<ApiResponse<{ user: any; access_token: string }>> {

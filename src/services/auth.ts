@@ -16,6 +16,8 @@ class AuthService {
       if (response.success && response.data) {
         const { user, access_token } = response.data;
         
+        // Store authentication data
+        localStorage.setItem('access_token', access_token);
         localStorage.setItem('isAuthenticated', 'true');
         localStorage.setItem('userEmail', user.email);
         localStorage.setItem('userName', user.name);
@@ -56,6 +58,7 @@ class AuthService {
   }
 
   clearAuthData(): void {
+    localStorage.removeItem('access_token');
     localStorage.removeItem('isAuthenticated');
     localStorage.removeItem('userEmail');
     localStorage.removeItem('userName');
@@ -63,7 +66,8 @@ class AuthService {
   }
 
   isAuthenticated(): boolean {
-    return localStorage.getItem('isAuthenticated') === 'true'
+    return localStorage.getItem('isAuthenticated') === 'true' && 
+           !!localStorage.getItem('access_token');
   }
 
   getCurrentUser(): { id: string; name: string; email: string } | null {
