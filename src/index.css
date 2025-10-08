@@ -149,4 +149,9 @@
     background: var(--gradient-card);
     border: 1px solid hsl(var(--border));
   }
+  
+  /* Estilização para o ícone Welth no modo escuro */
+  .dark .welth-icon {
+    filter: invert(1) brightness(2);
+  }
 }
