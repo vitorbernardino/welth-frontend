@@ -10,33 +10,38 @@ interface StatCardProps {
   trend: "up" | "down";
   icon: React.ReactNode;
   className?: string;
+  invertTrend?: boolean;
 }
 
-const StatCard = ({ title, value, change, trend, icon, className }: StatCardProps) => (
-  <Card className={`transition-all duration-200 hover:shadow-lg ${className}`}>
-    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-      <CardTitle className="text-sm font-medium text-muted-foreground">
-        {title}
-      </CardTitle>
-      <div className="text-muted-foreground">
-        {icon}
-      </div>
-    </CardHeader>
-    <CardContent>
-      <div className="text-2xl font-bold">{value}</div>
-      <div className={`flex items-center text-xs ${
-        trend === "up" ? "text-green-600" : "text-red-600"
-      }`}>
-        {trend === "up" ? (
-          <TrendingUp className="h-3 w-3 mr-1" />
-        ) : (
-          <TrendingDown className="h-3 w-3 mr-1" />
-        )}
-        {change}
-      </div>
-    </CardContent>
-  </Card>
-);
+const StatCard = ({ title, value, change, trend, icon, className, invertTrend = false }: StatCardProps) => {
+  const isPositive = invertTrend ? trend === "down" : trend === "up";
+  
+  return (
+    <Card className={`transition-all duration-200 hover:shadow-lg ${className}`}>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium text-muted-foreground">
+          {title}
+        </CardTitle>
+        <div className="text-muted-foreground">
+          {icon}
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold">{value}</div>
+        <div className={`flex items-center text-xs ${
+          isPositive ? "text-green-600" : "text-red-600"
+        }`}>
+          {trend === "up" ? (
+            <TrendingUp className="h-3 w-3 mr-1" />
+          ) : (
+            <TrendingDown className="h-3 w-3 mr-1" />
+          )}
+          {change}
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
 
 const LoadingSkeleton = () => (
   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -127,6 +132,7 @@ export const DashboardStats = () => {
         trend={monthlyExpenses.trend}
         icon={<TrendingDown className="h-4 w-4" />}
         className="border-l-4 border-l-red-500"
+        invertTrend={true}
       />
       <StatCard
         title="Média Mensal"
