@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
 import { PlusCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useCreateTransaction } from "@/hooks/useApi";
@@ -36,7 +37,9 @@ export const TransactionFormModal = () => {
     category: '',
     amount: '',
     date: new Date().toISOString().split('T')[0],
-    description: ''
+    description: '',
+    isRecurring: false,
+    dayOfMonth: new Date().getDate().toString()
   });
 
   const createTransactionMutation = useCreateTransaction();
@@ -53,29 +56,40 @@ export const TransactionFormModal = () => {
       return;
     }
 
-    const transactionData = {
+    const transactionData: any = {
       type: formData.type as 'income' | 'expense',
       category: formData.category.toLowerCase(),
       amount: parseFloat(formData.amount),
-      date: formData.date,
+      date: new Date(formData.date).toISOString(),
       description: formData.description,
       source: 'manual' as const
     };
 
+    if (formData.isRecurring) {
+      transactionData.isRecurring = true;
+      transactionData.recurringPattern = {
+        frequency: 'monthly',
+        dayOfMonth: parseInt(formData.dayOfMonth),
+        isActive: true
+      };
+    }
+
     createTransactionMutation.mutate(transactionData, {
       onSuccess: () => {
-        // Reset form and close modal
         setFormData({
           type: '',
           category: '',
           amount: '',
           date: new Date().toISOString().split('T')[0],
-          description: ''
+          description: '',
+          isRecurring: false,
+          dayOfMonth: new Date().getDate().toString()
         });
         setOpen(false);
       }
     });
   };
+
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -85,7 +99,7 @@ export const TransactionFormModal = () => {
           Nova Transação
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
             <PlusCircle className="h-5 w-5" />
@@ -164,6 +178,41 @@ export const TransactionFormModal = () => {
               rows={3}
             />
           </div>
+
+          <div className="flex items-center space-x-2 pt-2">
+            <Checkbox 
+              id="isRecurring" 
+              checked={formData.isRecurring}
+              onCheckedChange={(checked) => 
+                setFormData({ ...formData, isRecurring: checked as boolean })
+              }
+            />
+            <Label 
+              htmlFor="isRecurring" 
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+            >
+              Transação Recorrente (Mensal)
+            </Label>
+          </div>
+
+          {formData.isRecurring && (
+            <div className="space-y-2 p-4 bg-muted rounded-lg border">
+              <Label htmlFor="dayOfMonth">Dia do Mês</Label>
+              <Input
+                id="dayOfMonth"
+                type="number"
+                min="1"
+                max="31"
+                value={formData.dayOfMonth}
+                onChange={(e) => setFormData({ ...formData, dayOfMonth: e.target.value })}
+                placeholder="Ex: 10"
+              />
+              <p className="text-xs text-muted-foreground">
+                A transação será repetida mensalmente neste dia
+              </p>
+            </div>
+          )}
+
 
           <div className="flex gap-3 pt-4">
             <Button type="button" variant="outline" onClick={() => setOpen(false)} className="flex-1">

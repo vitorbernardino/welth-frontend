@@ -7,7 +7,7 @@ import {
   ArrowUpDown,
   TrendingUp,
   Menu,
-  X
+  ChevronLeft
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import WelthIcon from "@/assets/welth-icon.svg";
@@ -67,27 +67,21 @@ export const Sidebar = ({ activeTab, onTabChange }: SidebarProps) => {
       "bg-card border-r border-border transition-all duration-300 flex flex-col sidebar",
       isCollapsed ? "w-16" : "w-64"
     )}>
-      <div className="p-4">
+       <div className="p-4">
         <div className="flex items-center justify-between">
           {!isCollapsed && (
             <div className="flex items-center gap-2">
-              {/* Ícone importado para manter o padrão e facilitar a manutenção */}
               <img src={WelthIcon} alt="Welth" className="h-8 w-8 welth-icon" />
               <span className="text-xl font-bold text-foreground">Welth</span>
-            </div>
-          )}
-          {isCollapsed && (
-            <div className="flex justify-center w-full">
-              <img src={WelthIcon} alt="Welth" className="h-8 w-8 welth-icon" />
             </div>
           )}
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="h-8 w-8 p-0"
+            className={cn("h-8 w-8 p-0", isCollapsed && "mx-auto")}
           >
-            {isCollapsed ? <Menu className="h-4 w-4" /> : <X className="h-4 w-4" />}
+            {isCollapsed ? <Menu className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
           </Button>
         </div>
       </div>

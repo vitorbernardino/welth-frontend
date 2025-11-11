@@ -50,7 +50,6 @@ const EmptyState = () => (
     <CardContent>
       <div className="h-[300px] flex items-center justify-center text-muted-foreground">
         <div className="text-center">
-          <div className="text-4xl mb-4">📊</div>
           <p className="text-lg font-medium mb-2">Nenhum gasto encontrado</p>
           <p className="text-sm">Adicione transações para ver o gráfico</p>
         </div>
