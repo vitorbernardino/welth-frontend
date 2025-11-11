@@ -297,10 +297,6 @@ export const MonthlySpreadsheet = () => {
         return (
             <Card className="w-full">
                 <CardHeader>
-                    <CardTitle className="text-xl font-bold flex items-center gap-2">
-                        <Calendar className="h-5 w-5" />
-                        Planilha Financeira Multi-Mês
-                    </CardTitle>
                 </CardHeader>
                 <CardContent>
                     <LoadingState />
@@ -313,10 +309,6 @@ export const MonthlySpreadsheet = () => {
         return (
             <Card className="w-full">
                 <CardHeader>
-                    <CardTitle className="text-xl font-bold flex items-center gap-2">
-                        <Calendar className="h-5 w-5" />
-                        Planilha Financeira Multi-Mês
-                    </CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="text-red-500 text-center">Erro ao carregar os dados.</div>
@@ -329,11 +321,7 @@ export const MonthlySpreadsheet = () => {
         <Card className="w-full">
             <CardHeader>
                 <div className="flex items-center justify-between">
-                    <CardTitle className="text-xl font-bold flex items-center gap-2">
-                        <Calendar className="h-5 w-5" />
-                        Planilha Financeira Multi-Mês
-                    </CardTitle>
-
+            
                     {historicalMonths.length > 0 && (
                         <Dialog>
                             <DialogTrigger asChild>
