@@ -7,7 +7,7 @@ import {
   ArrowUpDown,
   TrendingUp,
   Menu,
-  X
+  ChevronLeft
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import WelthIcon from "@/assets/welth-icon.svg";
@@ -81,7 +81,7 @@ export const Sidebar = ({ activeTab, onTabChange }: SidebarProps) => {
             onClick={() => setIsCollapsed(!isCollapsed)}
             className={cn("h-8 w-8 p-0", isCollapsed && "mx-auto")}
           >
-            {isCollapsed ? <Menu className="h-4 w-4" /> : <X className="h-4 w-4" />}
+            {isCollapsed ? <Menu className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
           </Button>
         </div>
       </div>
