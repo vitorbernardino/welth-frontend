@@ -55,7 +55,6 @@ const EmptyState = () => (
     </CardHeader>
     <CardContent>
       <div className="text-center py-8">
-        <div className="text-4xl mb-4">💳</div>
         <p className="text-lg font-medium text-muted-foreground mb-2">Nenhuma transação encontrada</p>
         <p className="text-sm text-muted-foreground">
           Adicione transações para vê-las aqui
